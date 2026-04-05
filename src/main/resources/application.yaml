@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: Rostly - Honest Exam Platform
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/rostly
+    username: postgres
+    password: rostly_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: cruisebek@gmail.com
+    password: wzjcrkzerswwnwcq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+app:
+  admin:
+    email: cruisebek@gmail.com
+    password: rostly_pass
+    name: Rostly Admin
+
+  jwt:
+    secret: LxWkgKzR0Rrs4GDxXpOsvGnL2UFdLw+w+TL6187CjqY=
+    access-token-expiry: 900        # 15 minutes in seconds
+    refresh-token-expiry: 604800    # 7 days in seconds
+    verify-email-token-expiry: 43200      # 12 hours in seconds
+    change-email-token-expiry: 3600 # 1 hour in seconds
+#logging.level.web: DEBUG
