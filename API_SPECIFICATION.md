@@ -561,7 +561,8 @@ Submit the exam session.
 ### GET /api/exams/{examId}/sessions (TEACHER + ADMIN)
 List all sessions for an exam.
 **Query params:**
-- `status` — filter by `PENDING`, `IN_PROGRESS`, `SUBMITTED`, `FLAGGED`
+- `status` — filter by `IN_PROGRESS`, `SUBMITTED`, `GRADED`
+- `flagged` — filter by `true` / `false`
 - `studentId` — filter by student
 - `page`, `size`, `sort` (`startedAt`, `trustScore`), `direction`
 

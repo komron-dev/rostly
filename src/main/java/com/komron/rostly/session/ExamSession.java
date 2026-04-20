@@ -38,14 +38,18 @@ public class ExamSession {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private SessionStatus status;
+    private ExamSessionStatus status;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean flagged = false;
 
     private Integer trustScore;
 
     @Column(length = 500)
     private String randomPhotoLocation;
 
-    // session/ExamSession.java — add grading fields
+    // grading fields
     @Column(precision = 7, scale = 2)
     private BigDecimal totalScore;
 

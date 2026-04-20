@@ -6,6 +6,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -113,5 +117,28 @@ public class EmailService {
         );
 
         mailSender.send(message);
+    }
+
+    public void sendExamInvitation(String to, String studentName, String examName,
+                                   String sentByName, UUID invitationId, LocalDateTime expiresAt) {
+        log.info("Sending exam invitation email to {}", to);
+
+        String invitationLink = "http://localhost:8080/api/invitations/" + invitationId.toString();
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("You've been invited to take an exam on Rostly");
+        message.setText(
+                "Hi " + studentName + ",\n\n" +
+                        sentByName + " has invited you to take the following exam:\n\n" +
+                        "Exam: " + examName + "\n" +
+                        "Invitation expires: " + expiresAt.format(
+                        DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")) + "\n\n" +
+                        "View your invitation:\n" + invitationLink + "\n\n" +
+                        "If you did not expect this invitation, you can safely ignore this email."
+        );
+
+        mailSender.send(message);
+        log.info("Exam invitation email sent to {}", to);
     }
 }

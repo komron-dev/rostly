@@ -2,6 +2,8 @@ package com.komron.rostly.auth;
 
 import com.komron.rostly.auth.dto.*;
 import com.komron.rostly.config.JwtProperties;
+import com.komron.rostly.exception.ForbiddenException;
+import com.komron.rostly.exception.NotFoundException;
 import com.komron.rostly.user.Role;
 import com.komron.rostly.user.User;
 import com.komron.rostly.user.UserRepository;
@@ -115,7 +117,7 @@ public class AuthService {
 
     private TokenResponse handleEmailVerification(UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.isVerified()) {
             log.warn("Email verification skipped: already verified — userId={}", userId);
@@ -159,7 +161,7 @@ public class AuthService {
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         String oldEmail = user.getEmail();
         user.setEmail(newEmail);
@@ -190,17 +192,29 @@ public class AuthService {
 
         if (!user.isVerified()) {
             log.warn("Login failed: email not verified — {}", request.getEmail());
-            throw new IllegalStateException("Email not verified. Please check your inbox.");
+            throw new ForbiddenException("Email not verified. Please check your inbox.");
         }
 
         if (!user.isApproved()) {
             log.warn("Login failed: account not approved — {}", request.getEmail());
-            throw new IllegalStateException("Your account is pending admin approval.");
+            throw new ForbiddenException("Your account is pending admin approval.");
         }
 
         refreshTokenRepository.revokeAllByUser(user);
         log.info("Login successful: userId={}, role={}", user.getId(), user.getRole());
         return issueTokens(user);
+    }
+
+    @Transactional
+    public void logout(RefreshTokenRequest request) {
+        String tokenHash = hash(request.getRefreshToken());
+
+        refreshTokenRepository.findByTokenHashAndRevokedFalse(tokenHash)
+                .ifPresent(stored -> {
+                    stored.setRevoked(true);
+                    refreshTokenRepository.save(stored);
+                    log.info("Logout: refresh token revoked for userId={}", stored.getUser().getId());
+                });
     }
 
     @Transactional

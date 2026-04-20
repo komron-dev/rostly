@@ -33,7 +33,7 @@ public class ExamInvitation {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private InvitationStatus status;
+    private ExamInvitationStatus status;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime sentAt;

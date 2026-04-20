@@ -48,7 +48,7 @@ public class Exam {
     @JoinColumn(name = "updated_by")
     private User updatedBy;
 
-    @OneToOne(mappedBy = "exam", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "exam", cascade = CascadeType.ALL)
     private ExamSettings settings;
 
     @PrePersist

@@ -7,6 +7,8 @@ import com.komron.rostly.auth.dto.TokenResponse;
 import com.komron.rostly.config.JwtProperties;
 import com.komron.rostly.config.PageResponse;
 import com.komron.rostly.config.SecurityUtils;
+import com.komron.rostly.exception.ForbiddenException;
+import com.komron.rostly.exception.NotFoundException;
 import com.komron.rostly.user.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,13 +63,18 @@ public class UserService {
             || (currentUserRole.equals(Role.TEACHER.name()) && user.getRole().equals(Role.STUDENT))) {
             return toResponse(user);
         }
-        throw new IllegalArgumentException(currentUserRole + " does not have permission to view this user");
+        throw new ForbiddenException(currentUserRole + " does not have permission to view this user");
     }
 
-    // Private — returns entity for internal service use
-    private User findUserById(UUID userId) {
+    // Public — returns entity of the authenticated user, reusable across services
+    @Transactional(readOnly = true)
+    public User getCurrentUser() {
+        return findUserById(SecurityUtils.getCurrentUserId());
+    }
+
+    public User findUserById(UUID userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Transactional
@@ -113,7 +120,7 @@ public class UserService {
 
     @Transactional
     public ProfileResponse getProfile() {
-        User user = findUserById(SecurityUtils.getCurrentUserId());
+        User user = getCurrentUser();
         log.info("Getting profile for user: id={} name={}", user.getId(), user.getName());
         return ProfileResponse.builder()
                 .id(user.getId())
@@ -129,7 +136,7 @@ public class UserService {
 
     @Transactional
     public void updateProfile(UpdateProfileRequest request) {
-        User user = findUserById(SecurityUtils.getCurrentUserId());
+        User user = getCurrentUser();
         user.setName(request.getName());
         userRepository.save(user);
         log.info("Profile updated: id={} name={}", user.getId(), user.getName());
@@ -137,7 +144,7 @@ public class UserService {
 
     @Transactional
     public TokenResponse changeEmail(ChangeEmailRequest request) {
-        User user = findUserById(SecurityUtils.getCurrentUserId());
+        User user = getCurrentUser();
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
             log.warn("Email change failed: wrong current password — userId={}", user.getId());
@@ -165,7 +172,7 @@ public class UserService {
 
     @Transactional
     public TokenResponse changePassword(ChangePasswordRequest request) {
-        User user = findUserById(SecurityUtils.getCurrentUserId());
+        User user = getCurrentUser();
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
             log.warn("Password change failed: wrong current password — userId={}", user.getId());
@@ -194,7 +201,7 @@ public class UserService {
 
     @Transactional
     public void deleteProfile() {
-        User user = findUserById(SecurityUtils.getCurrentUserId());
+        User user = getCurrentUser();
         userRepository.delete(user);
         log.info("Profile deleted: id={}", user.getId());
     }

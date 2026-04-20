@@ -30,6 +30,10 @@ spring:
           auth: true
           starttls:
             enable: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 app:
   admin:
@@ -43,4 +47,12 @@ app:
     refresh-token-expiry: 604800    # 7 days in seconds
     verify-email-token-expiry: 43200      # 12 hours in seconds
     change-email-token-expiry: 3600 # 1 hour in seconds
+
+  storage:
+    photos-dir: ./uploads/photos
+    answers-dir: uploads/answers
+    violations-dir: uploads/violations
+
+  session:
+    default-trust-score: 100
 #logging.level.web: DEBUG

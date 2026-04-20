@@ -3,6 +3,8 @@ package com.komron.rostly.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,8 @@ import java.util.UUID;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
 @Table(name = "users")
+@SQLDelete(sql = "UPDATE users SET deleted_at = now() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class User {
 
     @Id @GeneratedValue @UuidGenerator
@@ -20,7 +24,7 @@ public class User {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 150)
+    @Column(nullable = false, length = 150)
     private String email;
 
     @Column(nullable = false)
@@ -39,6 +43,8 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    private LocalDateTime deletedAt;
 
     // user/User.java — add approved field
     @Builder.Default
