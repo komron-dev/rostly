@@ -118,11 +118,10 @@ public class ViolationService {
         String folderPath = storageProperties.getViolationsDir() + "/" + sessionId.toString().substring(0, 4) + "/";
         String fileName = type.name().toLowerCase() + "_"
                 + System.currentTimeMillis() + extension;
-        Path path = Paths.get(folderPath);
-        Path fullPath = path.resolve(fileName);
+        Path fullPath = Paths.get(folderPath).resolve(fileName);
 
         try {
-            Files.createDirectories(path);
+            Files.createDirectories(Paths.get(folderPath));
             Files.write(fullPath, file.getBytes());
         } catch (IOException e) {
             throw new RuntimeException("Failed to save evidence", e);
