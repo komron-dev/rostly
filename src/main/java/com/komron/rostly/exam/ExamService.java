@@ -116,7 +116,13 @@ public class ExamService {
     @Transactional
     public void deleteExam(UUID examId) {
         Exam exam = findExamById(examId);
-        checkExamWriteAccess(exam);
+        checkExamAccess(exam);
+
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isAfter(exam.getStartTime()) && now.isBefore(exam.getEndTime())) {
+            throw new IllegalStateException(
+                    "Cannot delete an exam while it is in progress");
+        }
 
         examRepository.delete(exam);
         log.info("Exam deleted: id={}", examId);
@@ -269,7 +275,10 @@ public class ExamService {
                 .requireMicrophone(settings.isRequireMicrophone())
                 .allowCopyPaste(settings.isAllowCopyPaste())
                 .allowTabSwitch(settings.isAllowTabSwitch())
-                // maxViolations, randomPhotoInterval — not set → hidden
+                .maxIdleSeconds(settings.getMaxIdleSeconds())
+                // randomPhotoInterval is needed client-side to drive proctor screenshots
+                .randomPhotoInterval(settings.getRandomPhotoInterval())
+                // maxViolations — kept hidden from students
                 .build();
     }
 

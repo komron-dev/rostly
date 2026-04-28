@@ -57,4 +57,11 @@ public class ExamSessionController {
             @PathVariable UUID sessionId) {
         return ResponseEntity.ok(examSessionService.finalizeSessionGrade(examId, sessionId));
     }
+
+    @GetMapping("/{sessionId}/random-photos")
+    public ResponseEntity<List<String>> getSessionRandomPhotos(
+            @PathVariable UUID examId,
+            @PathVariable UUID sessionId) {
+        return ResponseEntity.ok(examSessionService.getSessionRandomPhotos(examId, sessionId));
+    }
 }

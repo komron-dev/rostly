@@ -7,12 +7,13 @@ public enum ViolationType {
     TAB_SWITCH(true, true, 5),
     COPY_PASTE(false, false, 5),
     FULLSCREEN_EXIT(true, true, 5),
-    MULTIPLE_MONITORS(true, false, 7),
+    MULTIPLE_MONITORS(false, false, 10),
+    DEVTOOLS_OPEN(true, false, 1),
     IDLE(false, true, 2),
     FACE_NOT_VISIBLE(true, true, 7),
-    MULTIPLE_FACES(true, false, 10),
-    PHONE_DETECTED(true, false, 10),
     CAMERA_OFF(false, true, 3),
+    SCREEN_SHARE_OFF(false, true, 3),
+    MULTIPLE_FACES(true, true, 10),
     MICROPHONE_OFF(false, true, 3);
 
     private final boolean requiresScreenshot;

@@ -15,10 +15,11 @@ import java.util.UUID;
 public class ExamInvitationResponse {
     private UUID id;
     private UUID examId;
+    private String examName;
     private UUID studentId;
     private UUID sentBy;
     private ExamInvitationStatus status;
     private LocalDateTime sentAt;
     private LocalDateTime expiresAt;
-    private LocalDateTime acceptedAt;  // null until accepted
+    private LocalDateTime acceptedAt;
 }

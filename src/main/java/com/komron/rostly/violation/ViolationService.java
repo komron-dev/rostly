@@ -170,7 +170,7 @@ public class ViolationService {
                             "Tab switching is allowed in this exam");
                 }
             }
-            case CAMERA_OFF, FACE_NOT_VISIBLE, MULTIPLE_FACES, PHONE_DETECTED -> {
+            case CAMERA_OFF, FACE_NOT_VISIBLE, MULTIPLE_FACES -> {
                 if (!settings.isRequireCamera()) {
                     throw new IllegalArgumentException(
                             "Camera is not required in this exam");

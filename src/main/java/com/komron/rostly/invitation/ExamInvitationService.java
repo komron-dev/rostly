@@ -184,6 +184,7 @@ public class ExamInvitationService {
         return ExamInvitationResponse.builder()
                 .id(invitation.getId())
                 .examId(invitation.getExam().getId())
+                .examName(invitation.getExam().getName())
                 .studentId(invitation.getStudent().getId())
                 .sentBy(invitation.getSentBy().getId())
                 .status(invitation.getStatus())

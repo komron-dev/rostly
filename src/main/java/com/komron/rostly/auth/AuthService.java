@@ -141,7 +141,9 @@ public class AuthService {
             userRepository.save(user);
             log.info("Teacher verified, pending admin approval: userId={}", userId);
             emailService.sendPendingApprovalEmail(user.getEmail(), user.getName());
-
+            userRepository.findAllByRole(Role.ADMIN)
+                    .forEach(admin -> emailService.sendAdminApprovalReminder(
+                            admin.getEmail(), user.getName(), user.getEmail()));
             return TokenResponse.builder()
                     .message("Email verified. Your account is pending admin approval.")
                     .build();

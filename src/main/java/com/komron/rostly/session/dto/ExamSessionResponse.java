@@ -15,6 +15,7 @@ import java.util.UUID;
 public class ExamSessionResponse {
     private UUID id;
     private UUID examId;
+    private String examName;
     private UUID studentId;
     private ExamSessionStatus status;
     private LocalDateTime startedAt;

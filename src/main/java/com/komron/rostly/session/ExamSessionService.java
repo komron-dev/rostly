@@ -316,6 +316,27 @@ public class ExamSessionService {
         log.info("Photo stored: sessionId={}, path={}", sessionId, fullPath);
     }
 
+    @Transactional(readOnly = true)
+    public List<String> getSessionRandomPhotos(UUID examId, UUID sessionId) {
+        ExamSession session = examSessionRepository
+                .findByIdAndExamId(sessionId, examId)
+                .orElseThrow(() -> new NotFoundException("Session not found"));
+
+        if (session.getRandomPhotoLocation() == null) {
+            return List.of();
+        }
+
+        try {
+            return Files.list(Paths.get(session.getRandomPhotoLocation()))
+                    .map(p -> p.getFileName().toString())
+                    .sorted()
+                    .toList();
+        } catch (IOException e) {
+            log.warn("Could not read photos folder: {}", session.getRandomPhotoLocation());
+            return List.of();
+        }
+    }
+
     // helpers
 
     // teacher/admin — all fields set
@@ -323,6 +344,7 @@ public class ExamSessionService {
         return ExamSessionResponse.builder()
                 .id(session.getId())
                 .examId(session.getExam().getId())
+                .examName(session.getExam().getName())
                 .studentId(session.getStudent().getId())
                 .status(session.getStatus())
                 .startedAt(session.getStartedAt())
@@ -366,6 +388,7 @@ public class ExamSessionService {
         return ExamSessionResponse.builder()
                 .id(session.getId())
                 .examId(session.getExam().getId())
+                .examName(session.getExam().getName())
                 .status(session.getStatus())
                 .startedAt(session.getStartedAt())
                 .submittedAt(session.getSubmittedAt())

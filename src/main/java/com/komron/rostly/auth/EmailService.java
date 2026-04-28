@@ -20,7 +20,7 @@ public class EmailService {
     public void sendVerificationEmail(String to, String name, String token) {
         log.info("Sending verification email to {}", to);
 
-        String link = "http://localhost:8080/api/auth/verify?token=" + token;
+        String link = "http://localhost:5173/api/auth/verify?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
@@ -72,7 +72,7 @@ public class EmailService {
     public void sendEmailChangeVerification(String to, String name, String token) {
         log.info("Sending email change verification to {}", to);
 
-        String link = "http://localhost:8080/api/auth/verify?token=" + token;
+        String link = "http://localhost:5173/api/auth/verify?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
@@ -123,7 +123,7 @@ public class EmailService {
                                    String sentByName, UUID invitationId, LocalDateTime expiresAt) {
         log.info("Sending exam invitation email to {}", to);
 
-        String invitationLink = "http://localhost:8080/api/invitations/" + invitationId.toString();
+        String invitationLink = "http://localhost:5173/api/invitations/" + invitationId.toString();
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
@@ -140,5 +140,23 @@ public class EmailService {
 
         mailSender.send(message);
         log.info("Exam invitation email sent to {}", to);
+    }
+
+    public void sendAdminApprovalReminder(String adminEmail, String teacherName, String teacherEmail) {
+        log.info("Sending admin approval reminder to {} for teacher {}", adminEmail, teacherEmail);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(adminEmail);
+        message.setSubject("Rostly: Teacher account pending approval");
+        message.setText(
+                "A new teacher account is waiting for your approval:\n\n" +
+                        "Name:  " + teacherName + "\n" +
+                        "Email: " + teacherEmail + "\n\n" +
+                        "Log in to the admin panel to approve or reject the account.\n\n" +
+                        "Rostly Team"
+        );
+
+        mailSender.send(message);
+        log.info("Admin approval reminder sent to {}", adminEmail);
     }
 }

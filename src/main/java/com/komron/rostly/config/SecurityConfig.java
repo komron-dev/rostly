@@ -62,6 +62,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/api/auth/verify").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                        // answer files — student can access their own, teacher/admin can access all
+                        .requestMatchers("/uploads/answers/**").authenticated()
+
+                        // proctoring files — teacher/admin only
+                        .requestMatchers("/uploads/photos/**").hasAnyAuthority("TEACHER", "ADMIN")
+                        .requestMatchers("/uploads/violations/**").hasAnyAuthority("TEACHER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
