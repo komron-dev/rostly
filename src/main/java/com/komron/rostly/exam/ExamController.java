@@ -1,7 +1,9 @@
 package com.komron.rostly.exam;
 
 import com.komron.rostly.config.PageResponse;
-import com.komron.rostly.exam.dto.*;
+import com.komron.rostly.exam.dto.CreateExamRequest;
+import com.komron.rostly.exam.dto.ExamResponse;
+import com.komron.rostly.exam.dto.UpdateExamRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

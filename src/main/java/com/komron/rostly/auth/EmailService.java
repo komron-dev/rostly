@@ -29,7 +29,7 @@ public class EmailService {
                 "Hi " + name + ",\n\n" +
                         "Click the link below to verify your email address:\n\n" +
                         link + "\n\n" +
-                        "This link expires in 24 hours.\n\n" +
+                        "This link expires in 12 hours.\n\n" +
                         "If you did not create a Rostly account, ignore this email."
         );
 
@@ -99,7 +99,7 @@ public class EmailService {
                         "Your account password was just changed.\n\n" +
                         "If this was you, no action is needed.\n\n" +
                         "If you did not make this change, your account may be compromised. " +
-                        "Contact support immediately at support@rostly.com"
+                        "Contact support immediately at rostly.platfrom@gmail.com"
         );
 
         mailSender.send(message);
@@ -113,7 +113,7 @@ public class EmailService {
         message.setText(
                 "Hi " + name + ",\n\n" +
                         "Your account email was changed to " + newEmail + ".\n\n" +
-                        "If you did not make this change, contact support immediately at support@rostly.com"
+                        "If you did not make this change, contact support immediately at rostly.platfrom@gmail.com"
         );
 
         mailSender.send(message);

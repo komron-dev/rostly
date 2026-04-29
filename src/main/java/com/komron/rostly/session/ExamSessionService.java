@@ -243,6 +243,8 @@ public class ExamSessionService {
         answer.setGradedAt(LocalDateTime.now());
         answerRepository.save(answer);
 
+        recalculateTotalScore(session, grader);
+
         log.info("Question graded: sessionId={}, questionId={}, points={}, by={}",
                 sessionId, questionId, points, grader.getId());
         return toGradingResponse(question, answer);
@@ -250,33 +252,35 @@ public class ExamSessionService {
 
     @Transactional
     public ExamSessionResponse finalizeSessionGrade(UUID examId, UUID sessionId) {
-        Exam exam = examService.findExamById(examId);
-        examService.checkExamAccess(exam);
-
         ExamSession session = examSessionRepository
                 .findByIdAndExamId(sessionId, examId)
                 .orElseThrow(() -> new NotFoundException("Session not found"));
 
-        if (session.getStatus() != ExamSessionStatus.SUBMITTED
-                && session.getStatus() != ExamSessionStatus.GRADED) {
-            throw new IllegalStateException("Session must be SUBMITTED before finalizing");
+        examService.checkExamAccess(session.getExam());
+
+        if (session.getStatus() == ExamSessionStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Cannot finalize a session that is still in progress");
         }
 
-        long ungraded = answerRepository.countBySessionIdAndPointsAwardedIsNull(sessionId);
-        if (ungraded > 0) {
+        // verify all answers have been graded
+        boolean hasUngradedAnswers = answerRepository.findBySessionId(sessionId)
+                .stream()
+                .anyMatch(a -> a.getPointsAwarded() == null);
+
+        if (hasUngradedAnswers) {
             throw new IllegalStateException(
-                    ungraded + " answer(s) still ungraded");
+                    "Cannot finalize session — some answers have not been graded yet");
         }
 
-        User grader = userService.getCurrentUser();
-        session.setTotalScore(answerRepository.sumPointsAwardedBySessionId(sessionId));
+        // totalScore already up to date from gradeAnswer calls
+        User currentUser = userService.getCurrentUser();
         session.setStatus(ExamSessionStatus.GRADED);
         session.setGradedAt(LocalDateTime.now());
-        session.setGradedBy(grader);
+        session.setGradedBy(currentUser);
         examSessionRepository.save(session);
 
-        log.info("Session finalized: sessionId={}, totalScore={}, by={}",
-                sessionId, session.getTotalScore(), grader.getId());
+        log.info("Session finalized: sessionId={}, totalScore={}",
+                sessionId, session.getTotalScore());
         return toResponse(session);
     }
 
@@ -426,5 +430,20 @@ public class ExamSessionService {
         if (!session.getStudent().getId().equals(SecurityUtils.getCurrentUserId())) {
             throw new ForbiddenException("You do not have access to this session");
         }
+    }
+
+    private void recalculateTotalScore(ExamSession session, User gradedBy) {
+        BigDecimal total = answerRepository.findBySessionId(session.getId())
+                .stream()
+                .filter(a -> a.getPointsAwarded() != null)
+                .map(Answer::getPointsAwarded)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        session.setTotalScore(total);
+        session.setGradedAt(LocalDateTime.now());
+        session.setGradedBy(gradedBy);
+        examSessionRepository.save(session);
+        log.info("Total score recalculated: sessionId={}, totalScore={}",
+                session.getId(), total);
     }
 }

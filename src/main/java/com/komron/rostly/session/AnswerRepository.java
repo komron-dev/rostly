@@ -25,4 +25,6 @@ public interface AnswerRepository extends JpaRepository<Answer, UUID> {
 
     @Query("SELECT COALESCE(SUM(a.pointsAwarded), 0) FROM Answer a WHERE a.session.id = :sessionId")
     BigDecimal sumPointsAwardedBySessionId(@Param("sessionId") UUID sessionId);
+
+    List<Answer> findBySessionId(UUID sessionId);
 }

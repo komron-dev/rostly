@@ -41,6 +41,7 @@ public class FileValidator {
         return switch (file.getContentType()) {
             case "image/jpeg" -> ".jpg";
             case "image/png"  -> ".png";
+            case "image/webp" -> ".webp";
             case "application/pdf" -> ".pdf";
             case "application/msword" -> ".doc";
             default -> throw new IllegalArgumentException("Unsupported file type");

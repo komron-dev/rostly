@@ -3,9 +3,9 @@ spring:
     name: Rostly - Honest Exam Platform
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/rostly
-    username: postgres
-    password: rostly_pass
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -20,16 +20,17 @@ spring:
     locations: classpath:db/migration
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: cruisebek@gmail.com
-    password: wzjcrkzerswwnwcq
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+
   servlet:
     multipart:
       max-file-size: 5MB
@@ -37,22 +38,22 @@ spring:
 
 app:
   admin:
-    email: cruisebek@gmail.com
-    password: rostly_pass
-    name: Rostly Admin
+    email: ${APP_ADMIN_EMAIL}
+    password: ${APP_ADMIN_PASSWORD}
+    name: ${APP_ADMIN_NAME}
 
   jwt:
-    secret: LxWkgKzR0Rrs4GDxXpOsvGnL2UFdLw+w+TL6187CjqY=
-    access-token-expiry: 900        # 15 minutes in seconds
-    refresh-token-expiry: 604800    # 7 days in seconds
-    verify-email-token-expiry: 43200      # 12 hours in seconds
-    change-email-token-expiry: 3600 # 1 hour in seconds
+    secret: ${APP_JWT_SECRET}
+    access-token-expiry: ${APP_JWT_ACCESS_TOKEN_EXPIRY}
+    refresh-token-expiry: ${APP_JWT_REFRESH_TOKEN_EXPIRY}
+    verify-email-token-expiry: ${APP_JWT_VERIFY_EMAIL_TOKEN_EXPIRY}
+    change-email-token-expiry: ${APP_JWT_CHANGE_EMAIL_TOKEN_EXPIRY}
 
   storage:
-    photos-dir: ./uploads/photos
-    answers-dir: uploads/answers
-    violations-dir: uploads/violations
+    photos-dir: ${APP_STORAGE_PHOTOS_DIR}
+    answers-dir: ${APP_STORAGE_ANSWERS_DIR}
+    violations-dir: ${APP_STORAGE_VIOLATIONS_DIR}
 
   session:
-    default-trust-score: 100
+    default-trust-score: ${APP_SESSION_DEFAULT_TRUST_SCORE}
 #logging.level.web: DEBUG
