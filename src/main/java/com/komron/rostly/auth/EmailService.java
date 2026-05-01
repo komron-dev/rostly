@@ -67,6 +67,7 @@ public class EmailService {
                         "Rostly.\n\n" +
                         "Rostly Team"
         );
+        mailSender.send(message);
     }
 
     public void sendEmailChangeVerification(String to, String name, String token) {
