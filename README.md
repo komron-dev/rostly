@@ -2,7 +2,8 @@
 
 Spring Boot backend for Rostly, an online exam platform with role-based access, invitation-driven student onboarding, and built-in proctoring support.
 
-This service is the API and persistence layer used by the companion frontend repository, `rostly-frontend`.
+This service is the API and persistence layer used by the companion frontend repository, `rostly-frontend`:
+https://github.com/komron-dev/rostly-frontend
 
 ## Features
 
