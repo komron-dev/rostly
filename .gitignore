@@ -35,3 +35,4 @@ build/
 
 ### Runtime storage ###
 uploads/
+.DS_Store
